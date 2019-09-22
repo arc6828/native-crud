@@ -1,18 +1,11 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, View,  Platform, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, View,  Platform, TouchableOpacity, ScrollView,  FlatList, AsyncStorage } from 'react-native';
 import TodoItem from '../components/TodoItem';
-
-
-//import TodoModel from './../api/todos';
-//import Header from '../components/Header';
-//import COLORS from '../constants/Colors';
-
 
 export default class TodosContainer extends React.Component {
   constructor(props){
     super(props);
-    //const { title, completed, createdAt } = this.props.todo;
     this.state = {
       todos : [
         { _id : '1' , completed : false,  title : "exercise @ 7.00" },
@@ -20,17 +13,23 @@ export default class TodosContainer extends React.Component {
         { _id : '3' , completed : false,  title : "go to cinema @ 19.00"},
       ],
     };
+    //LOAD TO STATE
+    this._retrieveData();
   }
 
   onCreate = () => {
     let newData = {
         _id : '_' + Math.random().toString(36).substr(2, 9), //RANDOM NUMBER
-        title : "",
-        completed : false,
+        title : "", //Empty String
+        completed : false, 
     };
     let todos = this.state.todos;
     todos.push(newData);
+
+    //SAVE TO STATE
     this.setState({'todos': todos});
+    //SAVE TO LOCAL STORAGE
+    this._storeData();
   };
 
   onUpdate = (changedTitle, _id) => {    
@@ -45,7 +44,10 @@ export default class TodosContainer extends React.Component {
     //Log object to console again.
     //console.log("After update: ", myArray[objIndex])
 
+    //SAVE TO STATE
     this.setState({'todos': todos});
+    //SAVE TO LOCAL STORAGE
+    this._storeData();
   };
 
   onDelete = (_id) => {
@@ -53,6 +55,8 @@ export default class TodosContainer extends React.Component {
     objIndex = todos.findIndex((obj => obj._id == _id));
     todos.splice(objIndex, 1); 
     this.setState({'todos': todos});
+    //SAVE TO LOCAL STORAGE
+    this._storeData();
   };
 
   onCheck = (_id) => {    
@@ -70,41 +74,62 @@ export default class TodosContainer extends React.Component {
     this.setState({'todos': todos});
   };
 
+  _storeData = async () => {
+    try {
+      await AsyncStorage.setItem('todos', JSON.stringify(this.state.todos) );
+    } catch (error) {
+      // Error saving data
+    }
+  };
+
+  _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('todos');
+      if (value !== null) {
+        // We have data!!
+        console.log(value);
+        var todos = JSON.parse(value);
+        this.setState({'todos' : todos})
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <ScrollView>
           <FlatList
-              style={{ width: '100%', top: 15 }}
-              data={this.state.todos}
-              keyExtractor={item => item._id}
-              renderItem={ ({ item }) => (                
-                <TodoItem todo={ item }  method="read"
-                  onUpdate={ this.onUpdate } 
-                  onDelete={ this.onDelete } 
-                  onCheck={ this.onCheck } 
-                  />
+            style={{ width: '100%', top: 15 }}
+            data={this.state.todos}
+            keyExtractor={item => item._id}
+            renderItem={ ({ item }) => (                
+            <TodoItem todo={ item }  method="read"
+              onUpdate={ this.onUpdate } 
+              onDelete={ this.onDelete } 
+              onCheck={ this.onCheck } 
+              />
               )}
             />          
         </ScrollView>
         
         <TouchableOpacity 
-              onPress={() => this.onCreate() }
-              style={{ 
-                  backgroundColor: "lightblue" , 
-                  padding : 10, 
-                  width : 50, height : 50, 
-                  alignItems : "center", 
-                  alignContent : "center", 
-                  borderRadius:100, 
-                  position : 'absolute'  , 
-                  right : 10, bottom : 10}}>
-           <Ionicons
-                name={ Platform.OS === 'ios' ? 'ios-add' : 'md-add' }
-                size={26}
-                //style={{ marginBottom: -3 }}
-                //color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-                />
+          onPress={() => this.onCreate() }
+          style={{ 
+              backgroundColor: "lightblue" , 
+              padding : 10, 
+              width : 50, height : 50, 
+              alignItems : "center", 
+              alignContent : "center", 
+              borderRadius:100, 
+              position : 'absolute'  , 
+              right : 10, bottom : 10
+            }}>
+          <Ionicons
+            name={ Platform.OS === 'ios' ? 'ios-add' : 'md-add' }
+            size={26}
+            />
         </TouchableOpacity>
       </View>
     );
@@ -113,22 +138,22 @@ export default class TodosContainer extends React.Component {
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-    },
-    row: {
-        top: 15,
-        flex: 1,
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-    },
-    center: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  row: {
+    top: 15,
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
