@@ -7,6 +7,19 @@ import { Ionicons } from '@expo/vector-icons';
 
 import AppNavigator from './navigation/AppNavigator';
 
+
+import * as firebase from 'firebase';
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "<YOUR-API-KEY>",
+  authDomain: "<YOUR-AUTH-DOMAIN>",
+  databaseURL: "<YOUR-DATABASE-URL>",
+  storageBucket: "<YOUR-STORAGE-BUCKET>"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
