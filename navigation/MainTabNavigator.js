@@ -23,7 +23,7 @@ const HomeStack = createStackNavigator(
 HomeStack.navigationOptions = {
   tabBarLabel: 'All',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={ Platform.OS === 'ios' ? 'ios-home' : 'md-home' }
+    <TabBarIcon focused={focused} name={ Platform.OS === 'ios' ? 'ios-list' : 'md-list' }
     />
   ),
 };
@@ -38,9 +38,9 @@ const LinksStack = createStackNavigator(
 );
 
 LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+  tabBarLabel: 'Active',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-body' : 'md-body'} />
   ),
 };
 
@@ -54,9 +54,9 @@ const SettingsStack = createStackNavigator(
 );
 
 SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+  tabBarLabel: 'Completed',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'} />
   ),
 };
 

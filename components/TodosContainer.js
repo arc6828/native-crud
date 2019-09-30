@@ -28,6 +28,7 @@ export default class TodosContainer extends React.Component {
 
     //SAVE TO STATE
     this.setState({'todos': todos});
+    console.log(this.state.todos);
     //SAVE TO LOCAL STORAGE
     this._storeData();
   };
@@ -105,7 +106,8 @@ export default class TodosContainer extends React.Component {
             data={this.state.todos}
             keyExtractor={item => item._id}
             renderItem={ ({ item }) => (                
-            <TodoItem todo={ item }  method="read"
+            <TodoItem 
+              todo={ item }  
               onUpdate={ this.onUpdate } 
               onDelete={ this.onDelete } 
               onCheck={ this.onCheck } 
