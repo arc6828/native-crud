@@ -2,7 +2,9 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View,  Platform, TouchableOpacity, ScrollView,  FlatList, AsyncStorage } from 'react-native';
 import TodoItem from '../components/TodoItem';
-import Fire from '../Fire';
+import * as firebase from 'firebase';
+import '@firebase/firestore';
+
 
 export default class TodosContainer extends React.Component {
   constructor(props){
@@ -17,15 +19,17 @@ export default class TodosContainer extends React.Component {
     //LOAD TO STATE
     this._retrieveData();
 
-    //CONNECT WITH FIREBASE
-    fire = new Fire();
-    this.dbh = fire.getDB();
-    this.dbh.collection("characters").doc("mario").set({
-      employment: "plumber",
-      outfitColor: "red",
-      specialAttack: "fireball"
-    })
-
+    //LOAD FROM FIREBASE    
+    var db = firebase.firestore();
+    db.collection("todos").onSnapshot((querySnapshot) => {
+        //console.log("Query : " , querySnapshot.data());
+        const data = querySnapshot.docs.map(doc => doc.data());
+        console.log(data); // array of cities objects
+        this.setState({"todos":data});
+        //SAVE TO LOCAL STORAGE
+        this._storeData();
+          
+    });
 
   }
 
@@ -43,6 +47,16 @@ export default class TodosContainer extends React.Component {
     console.log(this.state.todos);
     //SAVE TO LOCAL STORAGE
     this._storeData();
+    //SAVE TO FIREBASE
+    var db = firebase.firestore();
+    db.collection("todos").doc(newData._id).set(newData)
+    .then(function() {
+        console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+        console.error("Error writing document: ", error);
+    });
+
   };
 
   onUpdate = (changedTitle, _id) => {    
@@ -61,6 +75,15 @@ export default class TodosContainer extends React.Component {
     this.setState({'todos': todos});
     //SAVE TO LOCAL STORAGE
     this._storeData();
+    //SAVE TO FIREBASE
+    var db = firebase.firestore();
+    db.collection("todos").doc(todos[objIndex]._id).set(todos[objIndex])
+    .then(function() {
+        console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+        console.error("Error writing document: ", error);
+    });
   };
 
   onDelete = (_id) => {
@@ -70,6 +93,14 @@ export default class TodosContainer extends React.Component {
     this.setState({'todos': todos});
     //SAVE TO LOCAL STORAGE
     this._storeData();
+    //SAVE TO FIREBASE
+    var db = firebase.firestore();
+    db.collection("todos").doc(_id).delete().then(function() {
+        console.log("Document successfully deleted!");
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
   };
 
   onCheck = (_id) => {    
@@ -85,6 +116,16 @@ export default class TodosContainer extends React.Component {
     //console.log("After update: ", myArray[objIndex])
 
     this.setState({'todos': todos});
+    //SAVE TO FIREBASE
+    var db = firebase.firestore();
+    db.collection("todos").doc(todos[objIndex]._id).set(todos[objIndex])
+    .then(function() {
+        console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+        console.error("Error writing document: ", error);
+    });
+
   };
 
   _storeData = async () => {
@@ -109,7 +150,7 @@ export default class TodosContainer extends React.Component {
     }
   };
 
-  storeHighScore(userId, score) {
+  /*storeHighScore(userId, score) {
     firebase.database().ref('users/' + userId).set({
       highscore: score
     });
@@ -120,7 +161,7 @@ export default class TodosContainer extends React.Component {
       const highscore = snapshot.val().highscore;
       console.log("New high score: " + highscore);
     });
-  }
+  }*/
 
   render() {
     return (
