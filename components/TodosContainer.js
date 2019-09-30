@@ -2,6 +2,7 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View,  Platform, TouchableOpacity, ScrollView,  FlatList, AsyncStorage } from 'react-native';
 import TodoItem from '../components/TodoItem';
+import Fire from '../Fire';
 
 export default class TodosContainer extends React.Component {
   constructor(props){
@@ -15,6 +16,17 @@ export default class TodosContainer extends React.Component {
     };
     //LOAD TO STATE
     this._retrieveData();
+
+    //CONNECT WITH FIREBASE
+    fire = new Fire();
+    this.dbh = fire.getDB();
+    this.dbh.collection("characters").doc("mario").set({
+      employment: "plumber",
+      outfitColor: "red",
+      specialAttack: "fireball"
+    })
+
+
   }
 
   onCreate = () => {
@@ -96,6 +108,19 @@ export default class TodosContainer extends React.Component {
       // Error retrieving data
     }
   };
+
+  storeHighScore(userId, score) {
+    firebase.database().ref('users/' + userId).set({
+      highscore: score
+    });
+  }
+
+  setupHighscoreListener(userId) {
+    firebase.database().ref('users/' + userId).on('value', (snapshot) => {
+      const highscore = snapshot.val().highscore;
+      console.log("New high score: " + highscore);
+    });
+  }
 
   render() {
     return (
