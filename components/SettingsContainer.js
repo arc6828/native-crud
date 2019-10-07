@@ -6,7 +6,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 
 
-export default class SettingsScreen extends React.Component {
+export default class SettingsContainer extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -62,11 +62,6 @@ export default class SettingsScreen extends React.Component {
     );
   }
 }
-
-SettingsScreen.navigationOptions = {
-  title: 'Settings',
-};
-
 
 
 const styles = StyleSheet.create({
