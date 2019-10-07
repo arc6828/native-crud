@@ -15,6 +15,7 @@ export default class TodosContainer extends React.Component {
         { _id : '2' , completed : false,  title : "meeting @ 9.00"},
         { _id : '3' , completed : false,  title : "go to cinema @ 19.00"},
       ],
+      user : null,
     };
     //LOAD TO STATE
     this._retrieveData();
@@ -30,13 +31,15 @@ export default class TodosContainer extends React.Component {
       this._storeData();
         
     });*/
-    db.collection("todos").onSnapshot((querySnapshot) => {
-        //console.log("Query : " , querySnapshot.data());
-        const data = querySnapshot.docs.map(doc => doc.data());
-        console.log(data); // array of cities objects
-        this.setState({"todos":data});
-        //SAVE TO LOCAL STORAGE
-        this._storeData();
+    db.collection("todos")
+      .where("user_id", "==", this.state.user ? this.state.user.uid : null)
+      .onSnapshot((querySnapshot) => {
+          //console.log("Query : " , querySnapshot.data());
+          const data = querySnapshot.docs.map(doc => doc.data());
+          console.log(data); // array of cities objects
+          this.setState({"todos":data});
+          //SAVE TO LOCAL STORAGE
+          this._storeData();
           
     });
 
@@ -47,6 +50,7 @@ export default class TodosContainer extends React.Component {
         _id : '_' + Math.random().toString(36).substr(2, 9), //RANDOM NUMBER
         title : "", //Empty String
         completed : false, 
+        user_id : this.state.user.uid, 
     };
     let todos = this.state.todos;
     todos.push(newData);
@@ -151,6 +155,7 @@ export default class TodosContainer extends React.Component {
 
   _retrieveData = async () => {
     try {
+      //TODOS
       const value = await AsyncStorage.getItem('todos');
       if (value !== null) {
         // We have data!!
@@ -158,6 +163,16 @@ export default class TodosContainer extends React.Component {
         var todos = JSON.parse(value);
         this.setState({'todos' : todos})
       }
+      //USER
+      const value2 = await AsyncStorage.getItem('user');
+      if (value2 !== null) {
+        // We have data!!
+        console.log(value2);
+        var user = JSON.parse(value2);
+        this.setState({'user' : user})
+      }
+      
+    console.log("User : ", this.state);
     } catch (error) {
       // Error retrieving data
     }

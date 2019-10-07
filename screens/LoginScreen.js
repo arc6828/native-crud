@@ -43,7 +43,9 @@ export default class LoginScreen extends React.Component {
           user : user.user
         });
         this._storeData();
-        
+        //Redirect
+        this.props.navigation.navigate("Main");
+
       })
       .catch((error) => {
         const { code, message } = error;

@@ -36,7 +36,8 @@ export default class RegisterScreen extends React.Component {
           user : user.user
         });
         this._storeData();
-
+        //Redirect
+        this.props.navigation.navigate("Main");
 
       })
       .catch((error) => {
