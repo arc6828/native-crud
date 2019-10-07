@@ -20,17 +20,9 @@ export default class TodosContainer extends React.Component {
     //LOAD TO STATE
     this._retrieveData();
 
+    /*
     //LOAD FROM FIREBASE    
     var db = firebase.firestore();
-    /*db.collection("todos").get().then((querySnapshot) => {
-      //console.log("Query : " , querySnapshot.data());
-      const data = querySnapshot.docs.map(doc => doc.data());
-      console.log(data); // array of cities objects
-      this.setState({"todos":data});
-      //SAVE TO LOCAL STORAGE
-      this._storeData();
-        
-    });*/
     db.collection("todos")
       .where("user_id", "==", this.state.user ? this.state.user.uid : null)
       .onSnapshot((querySnapshot) => {
@@ -39,9 +31,10 @@ export default class TodosContainer extends React.Component {
           console.log(data); // array of cities objects
           this.setState({"todos":data});
           //SAVE TO LOCAL STORAGE
-          this._storeData();
-          
+          this._storeData();          
     });
+    */
+    this._retrieveDataFromDatabase();
 
   }
 
@@ -172,7 +165,44 @@ export default class TodosContainer extends React.Component {
         this.setState({'user' : user})
       }
       
-    console.log("User : ", this.state);
+      console.log("User : ", this.state);
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
+  _retrieveDataFromDatabase = async () => {
+    try {
+      //TODOS
+      const value = await AsyncStorage.getItem('todos');
+      if (value !== null) {
+        // We have data!!
+        console.log(value);
+        var todos = JSON.parse(value);
+        this.setState({'todos' : todos})
+      }
+      //USER
+      const value2 = await AsyncStorage.getItem('user');
+      if (value2 !== null) {
+        // We have data!!
+        console.log(value2);
+        var user = JSON.parse(value2);
+        this.setState({'user' : user})
+      }
+      
+      console.log("User : ", this.state);
+      //LOAD FROM FIREBASE    
+      var db = firebase.firestore();
+      db.collection("todos")
+        .where("user_id", "==", this.state.user ? this.state.user.uid : null)
+        .onSnapshot((querySnapshot) => {
+            //console.log("Query : " , querySnapshot.data());
+            const data = querySnapshot.docs.map(doc => doc.data());
+            console.log(data); // array of cities objects
+            this.setState({"todos":data});
+            //SAVE TO LOCAL STORAGE
+            this._storeData();            
+      });
     } catch (error) {
       // Error retrieving data
     }
