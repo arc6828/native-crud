@@ -31,6 +31,11 @@ export default class RegisterScreen extends React.Component {
         //this.state.user = user;
         
         this.setState({ 'message' : ""});
+        this.setState({ 
+          message : "",
+          user : user.user
+        });
+        this._storeData();
 
 
       })
@@ -50,21 +55,7 @@ export default class RegisterScreen extends React.Component {
     } catch (error) {
       // Error saving data
     }
-  };
-
-  _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('user');
-      if (value !== null) {
-        // We have data!!
-        console.log(value);
-        var todos = JSON.parse(value);
-        this.setState({'todos' : todos})
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
-  };
+  };  
 
   render() {
     return (
@@ -74,7 +65,11 @@ export default class RegisterScreen extends React.Component {
                 style={styles.row}         
                 placeholder="Enter your email"      
                 value={this.state.email}          
-                onChangeText={changedTitle => this.setState({ "email" : changedTitle }) }
+                onChangeText={changedTitle => this.setState({ "email" : changedTitle }) }                  
+                keyboardType="email-address"
+                
+                autoCapitalize="none"
+                autoCorrect={false}
                 />
             <Text style={styles.row}>Password  : </Text>
             <TextInput 
@@ -82,6 +77,10 @@ export default class RegisterScreen extends React.Component {
                 placeholder="Enter your password"
                 value={this.state.password}          
                 onChangeText={changedTitle => this.setState({ "password" : changedTitle }) }
+                
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry={true}
                 />    
             <Text style={styles.row}> Confirm Password  : </Text>
             <TextInput 
@@ -89,6 +88,10 @@ export default class RegisterScreen extends React.Component {
                 placeholder="Enter your comfirm password"
                 value={this.state.confirm_password}          
                 onChangeText={changedTitle => this.setState({ "confirm_password" : changedTitle }) }
+                
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry={true}
                 />   
             <Button 
                 style={styles.row}
