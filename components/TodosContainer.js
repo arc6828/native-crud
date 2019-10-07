@@ -115,9 +115,7 @@ export default class TodosContainer extends React.Component {
     //Log object to console again.
     //console.log("After update: ", myArray[objIndex])
 
-    this.setState({'todos': todos});    
-    //SAVE TO LOCAL STORAGE
-    this._storeData();
+    this.setState({'todos': todos});
     //SAVE TO FIREBASE
     var db = firebase.firestore();
     db.collection("todos").doc(todos[objIndex]._id).set(todos[objIndex])
