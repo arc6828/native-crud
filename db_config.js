@@ -13,7 +13,7 @@ const firebaseConfig = {
 };  // apiKey, authDomain, etc. (see above)
 
 firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
+//var db = firebase.firestore();
 /*
 const dbh = firebase.firestore();
 

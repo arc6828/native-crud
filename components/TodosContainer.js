@@ -21,6 +21,15 @@ export default class TodosContainer extends React.Component {
 
     //LOAD FROM FIREBASE    
     var db = firebase.firestore();
+    /*db.collection("todos").get().then((querySnapshot) => {
+      //console.log("Query : " , querySnapshot.data());
+      const data = querySnapshot.docs.map(doc => doc.data());
+      console.log(data); // array of cities objects
+      this.setState({"todos":data});
+      //SAVE TO LOCAL STORAGE
+      this._storeData();
+        
+    });*/
     db.collection("todos").onSnapshot((querySnapshot) => {
         //console.log("Query : " , querySnapshot.data());
         const data = querySnapshot.docs.map(doc => doc.data());
@@ -45,8 +54,10 @@ export default class TodosContainer extends React.Component {
     //SAVE TO STATE
     this.setState({'todos': todos});
     console.log(this.state.todos);
+
     //SAVE TO LOCAL STORAGE
     this._storeData();
+
     //SAVE TO FIREBASE
     var db = firebase.firestore();
     db.collection("todos").doc(newData._id).set(newData)
